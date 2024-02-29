@@ -238,6 +238,115 @@ AND EMPLOYEE.SALARY >=2700000;
  * 
  * */
 
+-----------------------------------------------------------------------
+/*
+ * IN연산자
+ * 
+ * - 비교하려는 값과 목록에 작성된 값 중 
+ * 일치하는 것이 있으면 조회하는 연산자
+ * 
+ * [작성법]
+ * 
+ * WHERE 컬럼명 IN(값1, 값2, 값3);
+ * 
+ * WHERE 컬럼명 = 값1
+ * OR    컬럼명 = 값2
+ * OR    컬럼명 = 값3
+ * ...
+ * */
+
+
+--EMPLOYEE 테이블에서 부서코드가 D1, D6,D9인 사원의 사번, 이름, 부서코드 조회하기
+SELECT EMP_NO, EMP_NAME, DEPT_CODE  
+FROM EMPLOYEE
+WHERE DEPT_CODE IN('D1', 'D6', 'D9');--9명
+
+
+/*
+ * WHERE DEPT_CODE = 'D1
+ * OR    DEPT_CODE = 'D6'
+ * OR    DEPT_CODE = 'D9';
+ * */
+
+
+--NOT IN 
+
+--EMPLOYEE 테이블에서 부서코드가 D1, D6, D9이 아닌 사원의 사번, 이름, 부서코드 조회하기
+SELECT EMP_NO, EMP_NAME, DEPT_CODE  
+FROM EMPLOYEE
+WHERE DEPT_CODE NOT IN('D1', 'D6', 'D9')
+OR DEPT_CODE IS NULL; --> 부서코드가 없는 2명 포함 (NULL 처리 연산자)
+--NOT IN에서는 NULL을 포함하지 않는다->IS NULL 사용
+
+---------------------------------------------------------------------------------
+/* NULL 처리 연산자
+ * 
+ * JAVA에서 NULL : 참조하는 객체가 없음
+ * DB에서 NULL : 컬럼에 값이 없음을 의미하는 값
+ * 
+ * 1) IS NULL : NULL인 경우를 조회
+ * 2) IS NOT NULL : NULL이 아닌 경우 조회
+ * 
+ * */
+
+--EMPLOYEE 테이블에서 보너스가 있는 사원의 이름, 보너스 조회
+SELECT EMP_NAME, BONUS  
+FROM EMPLOYEE
+WHERE BONUS IS NOT NULL; --9행
+
+--EMPLOYEE 테이블에서 보너스가 없는 사원의 이름, 보너스 조회
+SELECT EMP_NAME, BONUS  
+FROM EMPLOYEE
+WHERE BONUS IS NULL; --14행
+
+--------------------------------------------------------------
+
+/*ORDER BY 절
+ * 
+ * -SELECT 문의 조회 결과(RESULT SET)를 정렬할 때 사용하는 구문
+ * 
+ * **SELECT문 해석 시 가장 마지막에 해석됨
+ * 
+ * SELECT절 (3)
+ * FROM절 (1)
+ * WHERE절 (2)
+ * ORDER BY 컬럼명|별칭|컬럼순서 [ACS|DECS] [NULLS FIRST|NULLS LAST](4)
+ *                         (오름차순/내림차순)(NULL이 들어오는 순서)
+ * 
+ * */
+
+--EMPLOYEE 테이블에서 급여 오름차순으로
+--사번, 이름, 급여를 조회해라
+SELECT EMP_ID, EMP_NAME , SALARY  
+FROM EMPLOYEE
+ORDER BY SALARY; --ASC가 기본값
+
+
+--급여 200만 이상인 사원의
+--사번, 이름, 급여 조회
+--단, 급여 내림차순으로 조회
+SELECT EMP_ID, EMP_NAME, SALARY  
+FROM EMPLOYEE 
+WHERE SALARY>=2000000
+ORDER BY 3 DESC; --SALARY의 컬럼 순서 3 적용
+
+--입사일 순서대로 이름, 입사일 조회(별칭 사용)
+SELECT EMP_NAME AS 이름, HIRE_DATE AS 입사일 
+FROM EMPLOYEE 
+ORDER BY 입사일;
+
+/*정렬 중첩 : 대분류 정렬 후 소분류 정렬 */
+
+-- 부서코드 오름차순 정렬 후 급여 내림차순 정렬
+SELECT EMP_NAME, DEPT_CODE, SALARY  
+FROM EMPLOYEE
+ORDER BY DEPT_CODE, SALARY DESC; 
+
+
+
+
+
+
 
 
 
