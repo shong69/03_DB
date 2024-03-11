@@ -684,7 +684,7 @@ SELECT * FROM USER_USED_FK3;
 
 
 ---------------------------------------------------------------------------------
--- 4. CHECK 제약조건 : 컬럼에 기록되는 값에 조건 설정을 할 수 있다
+-- 5. CHECK 제약조건 : 컬럼에 기록되는 값에 조건 설정을 할 수 있다
 -- CHECK (컬럼명 비교연산자 비교값)
 
 CREATE TABLE USER_USED_CHECK(
@@ -707,6 +707,118 @@ INSERT INTO USER_USED_CHECK
 VALUES(2,'USER02', 'PASS02', '홍길동', '남성', '010-2222-4444', 'LEE@KH.OR.KR');
 -- ORA-02290: 체크 제약조건(KH_KSY.GENDER_CHECK)이 위배되었습니다
 -- GENDER 컬럼에 CHECK제약조건으로 '남' 또는 '여'만 기록 가능하도록 해놓았음 -> 제약조건 위배됨
+
+
+
+
+-----------------------------------------------------------------------------------------
+-- 8. 서브쿼리를 이용한 테이블 생성
+--컬럼명, 데이터 타입, 값이 복사되고, 제약조건은 NOT NULL만 복사됨
+
+
+
+-- 1) 테이블 전체 복사
+CREATE TABLE EMPLOYEE_COPY
+AS SELECT * FROM EMPLOYEE;
+-->서브쿼리의 조회 결과(RESULT SET)의 모양대로 테이블이 생성됨
+
+SELECT * FROM EMPLOYEE_COPY;
+
+
+-- 2) JOIN 후 원하는 컬럼만 테이블로 복사하기
+CREATE TABLE EMPLOYEE_COPY2
+AS 
+SELECT EMP_ID, EMP_NAME, DEPT_TITLE, JOB_NAME
+FROM EMPLOYEE 
+LEFT JOIN DEPARTMENT ON(DEPT_CODE = DEPT_ID)
+JOIN JOB USING(JOB_CODE);
+
+SELECT * FROM EMPLOYEE_COPY2;
+-->서브쿼리로 테이블 생성 시 
+-- 테이블의 형태(컬럼명, 데이터 타입) + NOT NULL 제약 조건만 복사
+-- 제약조건, 코멘트는 복사되지 않기 때문에 별도의 추가 작업이 필요함
+
+
+
+
+
+-- 9. 제약조건 추가
+-- ALTER TABLE 테이블명 ADD [CONSTRAINT 제약조건명] PRIMAY KEY(컬럼명) 
+-- ALTER TABLE 테이블명 ADD [CONSTRAINT 제약조건명] UNIQUE(컬럼명) 
+-- ALTER TABLE 테이블명 ADD [CONSTRAINT 제약조건명] CHECK(컬럼명 비교연산자 비교값) 
+-- ALTER TABLE 테이블명 ADD [CONSTRAINT 제약조건명] FOREIGN KEY(컬럼명) REFERENCES 참조테이블명(참조컬럼명)
+ --> 참조 테이블의 PK(기본키)를 FK로 사용하는 경우 참조 컬럼명 생략 가능함
+
+-- ALTER TABLE 테이블명 MODIFY 컬럼명 NOT NULL;
+
+--NOT NULL 제약조건만 복사된 EMPLOYEE_COPY 테이블에 
+--EMP_ID 컬럼에 PK 제약조건 추가하기
+
+ALTER TABLE EMPLOYEE_COPY ADD CONSTRAINT PK_EMP_COPY PRIMARY KEY (EMP_ID);
+
+SELECT * FROM USER_CONSTRAINTS C1
+JOIN USER_CONS_COLUMNS USING(CONSTRAINT_NAME)
+WHERE C1.TABLE_NAME = 'EMPLOYEE_COPY';
+
+
+-- * 수업시간에 활용하던 테이블에는 FK 제약조건이 없는 상태이므로 추가!!
+
+--EMPLOYEE 테이블의 DEPT_CODE에 외래키 제약조건 추가
+--참조테이블은 DEPARTMENT, 참조 컬럼은 DEPARTMENT_ID
+
+SELECT * FROM USER_CONSTRAINTS C1
+JOIN USER_CONS_COLUMNS USING(CONSTRAINT_NAME)
+WHERE C1.TABLE_NAME = 'DEPARTMENT';
+
+ALTER TABLE EMPLOYEE
+ADD CONSTRAINT EMP_DEPT_CODE
+FOREIGN KEY(DEPT_CODE) REFERENCES DEPARTMENT(DEPT_ID) ON DELETE SET NULL;
+															/* PK 컬럼 참조(DEPT_ID) */
+
+
+--EMPLOYEE테이블의 JOB_CODE 외래키 제약조건 추가
+--참조 테이블은 JOB, 참조 컬럼은 JOB의 기본키
+SELECT * FROM USER_CONSTRAINTS C1
+JOIN USER_CONS_COLUMNS USING(CONSTRAINT_NAME)
+WHERE C1.TABLE_NAME = 'JOB';
+
+ALTER TABLE EMPLOYEE ADD CONSTRAINT EMP_JOB_CODE
+FOREIGN KEY(JOB_CODE) REFERENCES JOB ON DELETE SET NULL;
+
+
+
+--EMPLOYEE 테이블의 SAL_LEVEL 외래키 제약조건 추가
+--참조 테이블은 SAL_GRADE, 참조 컬럼은 SAL_GRADE의 기본키
+ALTER TABLE EMPLOYEE ADD CONSTRAINT EMP_SAL_LEVEL
+FOREIGN KEY(SAL_LEVEL) REFERENCES SAL_GRADE ON DELETE SET NULL;
+
+
+
+--DEPARTMENT 테이블의 LOCATIO_ID에 외래키 제약조건 추가
+--참조 테이블은 LOCATION, 참조 컬럼은 LOCATION의 기보키
+
+ALTER TABLE DEPARTMENT ADD CONSTRAINT DEPT_LOCATION_ID
+FOREIGN KEY(LOCATION_ID) REFERENCES LOCATION ON DELETE SET NULL;
+
+
+
+
+--LOCATION 테이블의 NATIONAL_CODE에 외래키 제약조건 추가
+--참조테이블은 NATIONAL, 참조 컬럼은 NATIONAL의 기본키
+ALTER TABLE LOCATION ADD CONSTRAINT LOC_NATIONAL_CODE
+FOREIGN KEY(NATIONAL_CODE) REFERENCES NATIONAL ON DELETE SET NULL;
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
