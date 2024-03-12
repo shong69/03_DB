@@ -70,13 +70,13 @@ MODIFY DEPT_TITLE NULL;
 --ALTER TABLE 테이블명 ADD( 추가할컬럼명 데이터 타입[DEFAULT '값']);
 
 --컬럼 수정
---ALTER TABLE TBALE 테이블명 MODIFY 컬럼명 데이터 타입; --> 데이터 타입 변경
+--ALTER TABLE 테이블명 MODIFY 컬럼명 데이터 타입; --> 데이터 타입 변경
 
---ALTER TABLE MODIFY 컬럼명 DEFAULT '값' -->DEFAULT RKQT QUSRUD
+--ALTER TABLE MODIFY 컬럼명 DEFAULT '값' -->DEFAULT 값 변경
 
 --컬럼 삭제 
 --ALTER TABLE 테이블명 DROP (삭제할컬럼명)
---A;TER TABLE 테이블명 DROP COLUMN 삭제할 컬럼명'
+--ALTER TABLE 테이블명 DROP COLUMN 삭제할 컬럼명
 
 
 --CNAME 컬럼 추가
